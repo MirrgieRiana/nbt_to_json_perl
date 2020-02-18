@@ -40,9 +40,259 @@ Decompress the gzip data.
 
 Read uncompressed NBT binary from stdin and print JSON string to stdout.
 
+### Usage
+
+```
+Usage: ./nbt2json [OPTIONS...]
+OPTION:
+                --help
+        -p,     --pretty
+                --root-name
+                --type-name
+                --type-key
+                --flat-compound
+                --flat-root
+                --flat-list
+        -r,     --readable
+```
+
+#### `--help`
+
+Print help message.
+
+#### `-p`, `--pretty`
+
+Format JSON string.
+
+----
+
+- $ `cat sample.nbt | ./nbt2json`
+
+```
+{"key":"","type":10,"value":[{"key":"L","type":9,"value":{"type":1,"values":[1,2]}}]}
+```
+
+↓
+
+- $ `cat sample.nbt | ./nbt2json -p`
+
+```
+{
+   "key": "",
+   "type": 10,
+   "value": [
+      {
+         "key": "L",
+         "type": 9,
+         "value": {
+            "type": 1,
+            "values": [
+               1,
+               2
+            ]
+         }
+      }
+   ]
+}
+```
+
+#### `--root-name`
+
+Force root tag name to be `root`.
+
+----
+
+- $ `cat sample.nbt | ./nbt2json -p --root-name`
+
+```
+{
+   "key": "root",
+   "type": 10,
+   "value": [
+      {
+         "key": "L",
+         "type": 9,
+         "value": {
+            "type": 1,
+            "values": [
+               1,
+               2
+            ]
+         }
+      }
+   ]
+}
+```
+
+#### `--type-name`
+
+Type is represented by name, not type ID.
+
+----
+
+- $ `cat sample.nbt | ./nbt2json -p --type-name`
+
+```
+{
+   "key": "",
+   "type": "compound",
+   "value": [
+      {
+         "key": "L",
+         "type": "list",
+         "value": {
+            "type": "byte",
+            "values": [
+               1,
+               2
+            ]
+         }
+      }
+   ]
+}
+```
+
+#### `--type-key`
+
+Tag key starts with a character representing the type.
+
+|Type ID|Type|Character|
+|:-:|:-:|:-:|
+|0|end|N|
+|1|byte|B|
+|2|short|S|
+|3|int|I|
+|4|long|L|
+|5|float|F|
+|6|double|D|
+|7|byte_array|b|
+|8|string|T|
+|9|list|A|
+|10|compound|C|
+|11|int_array|i|
+|12|long_array|l|
+
+----
+
+- $ `cat sample.nbt | ./nbt2json -p --type-key`
+
+```
+{
+   "key": "C",
+   "type": 10,
+   "value": [
+      {
+         "key": "AL",
+         "type": 9,
+         "value": {
+            "type": 1,
+            "values": [
+               1,
+               2
+            ]
+         }
+      }
+   ]
+}
+```
+
+#### `--flat-compound`
+
+The content of a compound tag is a JSON object instead of a list of tag structures.
+
+----
+
+- $ `cat sample.nbt | ./nbt2json -p --flat-compound`
+
+```
+{
+   "key": "",
+   "type": 10,
+   "value": {
+      "L": {
+         "type": 1,
+         "values": [
+            1,
+            2
+         ]
+      }
+   }
+}
+```
+
+#### `--flat-root`
+
+The root tag is a JSON object instead of a tag structure.
+
+----
+
+- $ `cat sample.nbt | ./nbt2json -p --flat-root`
+
+```
+{
+   "": [
+      {
+         "key": "L",
+         "type": 9,
+         "value": {
+            "type": 1,
+            "values": [
+               1,
+               2
+            ]
+         }
+      }
+   ]
+}
+```
+
+#### `--flat-list`
+
+The content of a compound tag has a JSON object instead of a list of tags.
+
+----
+
+- $ `cat sample.nbt | ./nbt2json -p --flat-list`
+
+```
+{
+   "key": "",
+   "type": 10,
+   "value": [
+      {
+         "key": "L",
+         "type": 9,
+         "value": [
+            1,
+            2
+         ]
+      }
+   ]
+}
+```
+
+#### `-r`, `--readable`
+
+Same as `--root-name --flat-compound --flat-root --flat-list`
+
+----
+
+- $ `cat sample.nbt | ./nbt2json -p -r`
+
+```
+{
+   "root": {
+      "L": [
+         1,
+         2
+      ]
+   }
+}
+```
+
 ### Example
 
-- $ `cat level.dat | ./inflate-gzip | ./nbt2json`
+- $ `cat level.dat | ./inflate-gzip | ./nbt2json -r -p`
 
 ## `region-format`
 
@@ -81,5 +331,3 @@ It is necessary to check the compression format with `region-format` beforehand.
 To convert the Minecraft save data into JSON strings, apply the tools in order according to the type of data.
 
 ![](https://github.com/MirrgieRiana/nbt_to_json_perl/blob/master/1.png?raw=true)
-
-
