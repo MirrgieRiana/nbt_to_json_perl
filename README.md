@@ -28,11 +28,11 @@ Execute the following command in any directory.
 
 # Tools
 
-## `inflate_zlib`
+## `inflate-zlib`
 
 Decompress the zlib data.
 
-## `inflate_gzip`
+## `inflate-gzip`
 
 Decompress the gzip data.
 
@@ -42,9 +42,9 @@ Read uncompressed NBT binary from stdin and print JSON string to stdout.
 
 ### Example
 
-- $ `cat level.dat | ./inflate_gzip | ./nbt2json`
+- $ `cat level.dat | ./inflate-gzip | ./nbt2json`
 
-## `region_format`
+## `region-format`
 
 Returns the existence and the compression format of a chunk as return code.
 
@@ -56,17 +56,17 @@ Returns the existence and the compression format of a chunk as return code.
 
 ### Usage
 
-- $ `./region_format REGION_FILENAME X Z`
+- $ `./region-format REGION_FILENAME X Z`
 
 ### Example
 
-- $ `./region_format world/region/r.4.48.mca 1 12; echo $?`
+- $ `./region-format world/region/r.4.48.mca 1 12; echo $?`
   - `0`
 
 ## `region`
 
 Prints compressed chunk data to stdout.
-It is necessary to check the compression format with region_format beforehand.
+It is necessary to check the compression format with `region-format` beforehand.
 
 ### Usage
 
@@ -74,4 +74,4 @@ It is necessary to check the compression format with region_format beforehand.
 
 ### Example
 
-- $ `./region world/region/r.4.48.mca 1 12 | ./inflate_zlib | ./nbt2json`
+- $ `./region world/region/r.4.48.mca 1 12 | ./inflate-zlib | ./nbt2json`
