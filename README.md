@@ -75,3 +75,11 @@ It is necessary to check the compression format with `region-format` beforehand.
 ### Example
 
 - $ `./region world/region/r.4.48.mca 1 12 | ./inflate-zlib | ./nbt2json`
+
+# Data
+
+To convert the Minecraft save data into JSON strings, apply the tools in order according to the type of data.
+
+![](https://github.com/MirrgieRiana/nbt_to_json_perl/blob/master/1.png?raw=true)
+
+
