@@ -9,7 +9,89 @@ use JSON qw/encode_json decode_json/;
 
 #
 
+sub usage(*$) {
+	my $fh = shift;
+	my $code = shift;
+	print $fh "Usage: ".__FILE__." [OPTIONS...]\n";
+	print $fh "OPTION:\n";
+	print $fh "\t\t--root-name\n";
+	print $fh "\t\t--type-name\n";
+	print $fh "\t\t--type-key\n";
+	print $fh "\t\t--flat-compound\n";
+	print $fh "\t\t--flat-root\n";
+	print $fh "\t\t--flat-list\n";
+	print $fh "\t-r,\t--readable\n";
+	print $fh "\t\t--help\n";
+	exit $code;
+}
+
+my $root_name = 0;
+my $type_name = 0;
+my $type_key = 0;
+my $flat_compound = 0;
+my $flat_root = 0;
+my $flat_list = 0;
+
+while ($#ARGV > -1) {
+
+	if ($ARGV[0] eq "--root-name") {
+		shift @ARGV;
+		$root_name = 1;
+		next;
+	}
+
+	if ($ARGV[0] eq "--type-name") {
+		shift @ARGV;
+		$type_name = 1;
+		next;
+	}
+
+	if ($ARGV[0] eq "--type-key") {
+		shift @ARGV;
+		$type_key = 1;
+		next;
+	}
+
+	if ($ARGV[0] eq "--flat-compound") {
+		shift @ARGV;
+		$flat_compound = 1;
+		next;
+	}
+
+	if ($ARGV[0] eq "--flat-root") {
+		shift @ARGV;
+		$flat_root = 1;
+		next;
+	}
+
+	if ($ARGV[0] eq "--flat-list") {
+		shift @ARGV;
+		$flat_list = 1;
+		next;
+	}
+
+	if ($ARGV[0] eq "-r" || $ARGV[0] eq "--readable") {
+		shift @ARGV;
+		$root_name = 1;
+		$flat_compound = 1;
+		$flat_root = 1;
+		$flat_list = 1;
+		next;
+	}
+
+	if ($ARGV[0] eq "--help") {
+		shift @ARGV;
+		usage *STDOUT, 0;
+		next;
+	}
+
+	usage *STDERR, 1;
+}
+
+#
+
 my %types = (
+	0 => ["end", "N", 0],
 	1 => ["byte", "B", \&read_byte],
 	2 => ["short", "S", \&read_short],
 	3 => ["int", "I", \&read_int],
@@ -17,9 +99,9 @@ my %types = (
 	5 => ["float", "F", \&read_float],
 	6 => ["double", "D", \&read_double],
 	7 => ["byte_array", "b", \&read_byte_array],
-	8 => ["string", "A", \&read_string],
-	9 => ["list", "@", \&read_list],
-	10 => ["compound", "%", \&read_compound],
+	8 => ["string", "T", \&read_string],
+	9 => ["list", "A", \&read_list],
+	10 => ["compound", "C", \&read_compound],
 	11 => ["int_array", "i", \&read_int_array],
 	12 => ["long_array", "l", \&read_long_array],
 );
@@ -57,11 +139,13 @@ sub read_long() {
 }
 
 sub read_float() {
-	return unpack("f>", read_data(4));
+	my $data = read_data(4);
+	return "0x".unpack("H*", $data)."=".sprintf("%.17g", unpack("f>", $data));
 }
 
 sub read_double() {
-	return unpack("d>", read_data(8));
+	my $data = read_data(8);
+	return "0x".unpack("H*", $data)."=".sprintf("%.17g", unpack("d>", $data));
 }
 
 sub read_byte_array() {
@@ -89,10 +173,16 @@ sub read_list() {
 		read_payload($type);
 	} 0 .. $length - 1;
 
-	return {
-		type => $type,
-		values => \@values,
-	};
+	$type = $types{$type}->[0] if $type_name;
+
+	if ($flat_list) {
+		return \@values;
+	} else {
+		return {
+			type => $type,
+			values => \@values,
+		};
+	}
 }
 
 sub read_compound() {
@@ -102,9 +192,19 @@ sub read_compound() {
 		if ($entry->{type} == 0) {
 			last;
 		}
+		$entry->{key} = $types{$entry->{type}}->[1].$entry->{key} if $type_key;
+		$entry->{type} = $types{$entry->{type}}->[0] if $type_name;
 		push @entries, $entry;
 	}
-	return \@entries;
+	if ($flat_compound) {
+		my %hash;
+		for my $entry (@entries) {
+			$hash{$entry->{key}} = $entry->{value};
+		}
+		return \%hash;
+	} else {
+		return \@entries;
+	}
 }
 
 sub read_entry() {
@@ -151,7 +251,21 @@ sub read_payload($) {
 	return $a->[2]();
 }
 
+sub read_root() {
+	my $entry = read_entry();
+	$entry->{key} = "root" if $root_name;
+	$entry->{key} = $types{$entry->{type}}->[1].$entry->{key} if $type_key;
+	$entry->{type} = $types{$entry->{type}}->[0] if $type_name;
+	if ($flat_root) {
+		return {
+			$entry->{key} => $entry->{value},
+		};
+	} else {
+		return $entry;
+	}
+}
+
 #
 
 binmode STDIN;
-print JSON->new->canonical->ascii->encode(read_entry()), "\n";
+print JSON->new->canonical->ascii->encode(read_root()), "\n";
