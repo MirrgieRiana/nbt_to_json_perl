@@ -248,7 +248,7 @@ The root tag is a JSON object instead of a tag structure.
 
 #### `--flat-list`
 
-The content of a compound tag has a JSON object instead of a list of tags.
+The content of a list tag is a JSON array instead of a structure containing type and values.
 
 ----
 
@@ -288,6 +288,16 @@ Same as `--root-name --flat-compound --flat-root --flat-list`
       ]
    }
 }
+```
+
+----
+
+This option is useful with one-liner such as jq.
+
+- $ `cat sample.nbt | ./nbt2json -r | jq '.root.L | add'`
+
+```
+3
 ```
 
 ### Example
