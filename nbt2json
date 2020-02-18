@@ -9,6 +9,21 @@ use JSON qw/encode_json decode_json/;
 
 #
 
+my %types = (
+	1 => ["byte", "B", \&read_byte],
+	2 => ["short", "S", \&read_short],
+	3 => ["int", "I", \&read_int],
+	4 => ["long", "L", \&read_long],
+	5 => ["float", "F", \&read_float],
+	6 => ["double", "D", \&read_double],
+	7 => ["byte_array", "b", \&read_byte_array],
+	8 => ["string", "A", \&read_string],
+	9 => ["list", "@", \&read_list],
+	10 => ["compound", "%", \&read_compound],
+	11 => ["int_array", "i", \&read_int_array],
+	12 => ["long_array", "l", \&read_long_array],
+);
+
 sub read_data($) {
 	my $size = shift;
 	if ($size == 0) {
@@ -131,33 +146,9 @@ sub read_long_array() {
 
 sub read_payload($) {
 	my $type = shift;
-	if ($type == 1) {
-		return read_byte();
-	} elsif ($type == 2) {
-		return read_short();
-	} elsif ($type == 3) {
-		return read_int();
-	} elsif ($type == 4) {
-		return read_long();
-	} elsif ($type == 5) {
-		return read_float();
-	} elsif ($type == 6) {
-		return read_double();
-	} elsif ($type == 7) {
-		return read_byte_array();
-	} elsif ($type == 8) {
-		return read_string();
-	} elsif ($type == 9) {
-		return read_list();
-	} elsif ($type == 10) {
-		return read_compound();
-	} elsif ($type == 11) {
-		return read_int_array();
-	} elsif ($type == 12) {
-		return read_long_array();
-	} else {
-		die "Unknown Type: $type";
-	}
+	my $a = $types{$type};
+	die "Unknown Type: $type" if ! defined $a;
+	return $a->[2]();
 }
 
 #
