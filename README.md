@@ -1,6 +1,21 @@
-# NBT to JSON Perl
+# Name
 
-A tool to convert NBT and JSON written in Perl
+NBT to JSON Perl - A tool to convert NBT and JSON written in Perl
+
+# Synopsis
+
+- $ `cat sample.nbt | ./nbt2json -p -r`
+
+```
+{
+   "root": {
+      "L": [
+         1,
+         2
+      ]
+   }
+}
+```
 
 # Installation
 
@@ -59,6 +74,8 @@ OPTION:
 #### `--help`
 
 Print help message.
+
+- $ `./nbt2json --help`
 
 #### `-p`, `--pretty`
 
@@ -308,15 +325,15 @@ This option is useful with one-liner such as jq.
 
 Returns the existence and the compression format of a chunk as return code.
 
+### Usage
+
+- $ `./region-format REGION_FILENAME X Z`
+
 ### Return code
 
 - 0: No chunk data
 - 1: Compression format = zlib
 - 2: Compression format = gzip
-
-### Usage
-
-- $ `./region-format REGION_FILENAME X Z`
 
 ### Example
 
