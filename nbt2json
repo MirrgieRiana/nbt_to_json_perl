@@ -14,6 +14,8 @@ sub usage(*$) {
 	my $code = shift;
 	print $fh "Usage: ".__FILE__." [OPTIONS...]\n";
 	print $fh "OPTION:\n";
+	print $fh "\t\t--help\n";
+	print $fh "\t-p,\t--pretty\n";
 	print $fh "\t\t--root-name\n";
 	print $fh "\t\t--type-name\n";
 	print $fh "\t\t--type-key\n";
@@ -21,10 +23,10 @@ sub usage(*$) {
 	print $fh "\t\t--flat-root\n";
 	print $fh "\t\t--flat-list\n";
 	print $fh "\t-r,\t--readable\n";
-	print $fh "\t\t--help\n";
 	exit $code;
 }
 
+my $pretty = 0;
 my $root_name = 0;
 my $type_name = 0;
 my $type_key = 0;
@@ -33,6 +35,18 @@ my $flat_root = 0;
 my $flat_list = 0;
 
 while ($#ARGV > -1) {
+
+	if ($ARGV[0] eq "--help") {
+		shift @ARGV;
+		usage *STDOUT, 0;
+		next;
+	}
+
+	if ($ARGV[0] eq "-p" || $ARGV[0] eq "--pretty") {
+		shift @ARGV;
+		$pretty = 1;
+		next;
+	}
 
 	if ($ARGV[0] eq "--root-name") {
 		shift @ARGV;
@@ -79,12 +93,6 @@ while ($#ARGV > -1) {
 		next;
 	}
 
-	if ($ARGV[0] eq "--help") {
-		shift @ARGV;
-		usage *STDOUT, 0;
-		next;
-	}
-
 	usage *STDERR, 1;
 }
 
@@ -105,6 +113,10 @@ my %types = (
 	11 => ["int_array", "i", \&read_int_array],
 	12 => ["long_array", "l", \&read_long_array],
 );
+
+sub safe($) {
+	return $_[0];
+}
 
 sub read_data($) {
 	my $size = shift;
@@ -192,8 +204,8 @@ sub read_compound() {
 		if ($entry->{type} == 0) {
 			last;
 		}
-		$entry->{key} = $types{$entry->{type}}->[1].$entry->{key} if $type_key;
-		$entry->{type} = $types{$entry->{type}}->[0] if $type_name;
+		$entry->{key} = $types{safe($entry->{type})}->[1].$entry->{key} if $type_key;
+		$entry->{type} = $types{safe($entry->{type})}->[0] if $type_name;
 		push @entries, $entry;
 	}
 	if ($flat_compound) {
@@ -254,8 +266,8 @@ sub read_payload($) {
 sub read_root() {
 	my $entry = read_entry();
 	$entry->{key} = "root" if $root_name;
-	$entry->{key} = $types{$entry->{type}}->[1].$entry->{key} if $type_key;
-	$entry->{type} = $types{$entry->{type}}->[0] if $type_name;
+	$entry->{key} = $types{safe($entry->{type})}->[1].$entry->{key} if $type_key;
+	$entry->{type} = $types{safe($entry->{type})}->[0] if $type_name;
 	if ($flat_root) {
 		return {
 			$entry->{key} => $entry->{value},
@@ -268,4 +280,6 @@ sub read_root() {
 #
 
 binmode STDIN;
-print JSON->new->canonical->ascii->encode(read_root()), "\n";
+my $json = JSON->new->canonical->ascii;
+$json = $json->indent->space_after if $pretty;
+print $json->encode(read_root()), "\n";
