@@ -68,6 +68,7 @@ OPTION:
                 --flat-compound
                 --flat-root
                 --flat-list
+                --hex-integer
         -r,     --readable
 ```
 
@@ -283,6 +284,34 @@ The content of a list tag is a JSON array instead of a structure containing type
             1,
             2
          ]
+      }
+   ]
+}
+```
+
+#### `--hex-integer`
+
+Print a byte, short, int, and long value as a hex string.
+
+----
+
+- $ `cat sample.nbt | ./nbt2json -p --hex-integer`
+
+```
+{
+   "key": "",
+   "type": 10,
+   "value": [
+      {
+         "key": "L",
+         "type": 9,
+         "value": {
+            "type": 1,
+            "values": [
+               "0x01",
+               "0x02"
+            ]
+         }
       }
    ]
 }
