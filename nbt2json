@@ -22,6 +22,7 @@ sub usage(*$) {
 	print $fh "\t\t--flat-compound\n";
 	print $fh "\t\t--flat-root\n";
 	print $fh "\t\t--flat-list\n";
+	print $fh "\t\t--hex-integer\n";
 	print $fh "\t-r,\t--readable\n";
 	exit $code;
 }
@@ -33,6 +34,7 @@ my $type_key = 0;
 my $flat_compound = 0;
 my $flat_root = 0;
 my $flat_list = 0;
+my $hex_integer = 0;
 
 while ($#ARGV > -1) {
 
@@ -81,6 +83,12 @@ while ($#ARGV > -1) {
 	if ($ARGV[0] eq "--flat-list") {
 		shift @ARGV;
 		$flat_list = 1;
+		next;
+	}
+
+	if ($ARGV[0] eq "--hex-integer") {
+		shift @ARGV;
+		$hex_integer = 1;
 		next;
 	}
 
@@ -134,20 +142,48 @@ sub read_data($) {
 	}
 }
 
-sub read_byte() {
+sub read_integer_1() {
 	return unpack("c", read_data(1));
 }
 
-sub read_short() {
+sub read_integer_2() {
 	return unpack("s>", read_data(2));
 }
 
-sub read_int() {
+sub read_integer_4() {
 	return unpack("l>", read_data(4));
 }
 
+sub read_byte() {
+	if ($hex_integer) {
+		return "0x".unpack("H*", read_data(1));
+	} else {
+		return unpack("c", read_data(1));
+	}
+}
+
+sub read_short() {
+	if ($hex_integer) {
+		return "0x".unpack("H*", read_data(2));
+	} else {
+		return unpack("s>", read_data(2));
+	}
+}
+
+sub read_int() {
+	if ($hex_integer) {
+		return "0x".unpack("H*", read_data(4));
+	} else {
+		return unpack("l>", read_data(4));
+	}
+}
+
 sub read_long() {
-	return unpack("q>", read_data(8));
+	if ($hex_integer) {
+		return "0x".unpack("H*", read_data(8));
+	} else {
+		return unpack("q>", read_data(8));
+	}
 }
 
 sub read_float() {
@@ -161,7 +197,7 @@ sub read_double() {
 }
 
 sub read_byte_array() {
-	my $length = read_int();
+	my $length = read_integer_4();
 	die if $length < 0;
 	my @values = map {
 		read_byte();
@@ -171,15 +207,15 @@ sub read_byte_array() {
 }
 
 sub read_string() {
-	my $length = read_short();
+	my $length = read_integer_2();
 	die if $length < 0;
 	my $data = read_data($length);
 	return decode("utf8", $data);
 }
 
 sub read_list() {
-	my $type = read_byte();
-	my $length = read_int();
+	my $type = read_integer_1();
+	my $length = read_integer_4();
 	die if $length < 0;
 	my @values = map {
 		read_payload($type);
@@ -220,7 +256,7 @@ sub read_compound() {
 }
 
 sub read_entry() {
-	my $type = read_byte();
+	my $type = read_integer_1();
 	if ($type == 0) {
 		return {
 			type => $type,
@@ -237,7 +273,7 @@ sub read_entry() {
 }
 
 sub read_int_array() {
-	my $length = read_int();
+	my $length = read_integer_4();
 	die if $length < 0;
 	my @values = map {
 		read_int();
@@ -247,7 +283,7 @@ sub read_int_array() {
 }
 
 sub read_long_array() {
-	my $length = read_int();
+	my $length = read_integer_4();
 	die if $length < 0;
 	my @values = map {
 		read_long();
