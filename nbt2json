@@ -24,6 +24,7 @@ sub usage(*$) {
 	print $fh "\t\t--flat-list\n";
 	print $fh "\t\t--hex-integer\n";
 	print $fh "\t\t--hex-float\n";
+	print $fh "\t-e,\t--eval PROGRAM\n";
 	print $fh "\t-r,\t--readable\n";
 	print $fh "\t-H,\t--hex\n";
 	exit $code;
@@ -38,6 +39,7 @@ my $flat_root = 0;
 my $flat_list = 0;
 my $hex_integer = 0;
 my $hex_float = 0;
+my $eval;
 
 my @short_options;
 sub arg($) {
@@ -109,6 +111,12 @@ while ($#ARGV > -1 || $#short_options > -1) {
 
 	if (arg "--hex-float") {
 		$hex_float = 1;
+		next;
+	}
+
+	if (sarg "e" || arg "--eval") {
+		usage *STDERR, 1 unless $#ARGV > -1;
+		$eval = shift @ARGV;
 		next;
 	}
 
@@ -351,4 +359,6 @@ sub read_root() {
 binmode STDIN;
 my $json = JSON->new->canonical->ascii;
 $json = $json->indent->space_after if $pretty;
-print $json->encode(read_root()), "\n";
+$_ = read_root();
+eval $eval if defined $eval;
+print $json->encode($_), "\n";
