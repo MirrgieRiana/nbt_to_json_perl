@@ -1,6 +1,6 @@
 # Name
 
-NBT to JSON Perl - A tool to convert NBT and JSON written in Perl
+NBT to JSON Perl - A command line tool to convert NBT and JSON written in Perl
 
 # Synopsis
 
