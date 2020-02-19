@@ -329,7 +329,7 @@ Same as `--root-name --flat-compound --flat-root --flat-list`
 
 ----
 
-- $ `cat sample.nbt | ./nbt2json -p -r`
+- $ `cat sample.nbt | ./nbt2json -pr`
 
 ```
 {
@@ -358,7 +358,7 @@ Same as `--hex-integer --hex-float`
 
 ----
 
-- $ `cat sample.nbt | ./nbt2json -p -H`
+- $ `cat sample.nbt | ./nbt2json -pH`
 
 ```
 {
