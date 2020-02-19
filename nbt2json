@@ -41,6 +41,12 @@ my $hex_float = 0;
 
 while ($#ARGV > -1) {
 
+	if ($ARGV[0] =~ /-([a-zA-Z0-9]{2,})/) {
+		shift @ARGV;
+		unshift @ARGV, "-$_" for split //, $1;
+		next;
+	}
+
 	if ($ARGV[0] eq "--help") {
 		shift @ARGV;
 		usage *STDOUT, 0;
