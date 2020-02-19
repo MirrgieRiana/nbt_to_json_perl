@@ -69,7 +69,9 @@ OPTION:
                 --flat-root
                 --flat-list
                 --hex-integer
+                --hex-float
         -r,     --readable
+        -H,     --hex
 ```
 
 #### `--help`
@@ -317,6 +319,10 @@ Print a byte, short, int, and long value as a hex string.
 }
 ```
 
+#### `--hex-float`
+
+Print a float and double value as a hex string.
+
 #### `-r`, `--readable`
 
 Same as `--root-name --flat-compound --flat-root --flat-list`
@@ -344,6 +350,34 @@ This option is useful with one-liner such as jq.
 
 ```
 3
+```
+
+#### `-H`, `--hex`
+
+Same as `--hex-integer --hex-float`
+
+----
+
+- $ `cat sample.nbt | ./nbt2json -p -H`
+
+```
+{
+   "key": "",
+   "type": 10,
+   "value": [
+      {
+         "key": "L",
+         "type": 9,
+         "value": {
+            "type": 1,
+            "values": [
+               "0x01",
+               "0x02"
+            ]
+         }
+      }
+   ]
+}
 ```
 
 ### Warnings
