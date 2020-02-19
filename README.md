@@ -70,6 +70,7 @@ OPTION:
                 --flat-list
                 --hex-integer
                 --hex-float
+        -e,     --eval PROGRAM
         -r,     --readable
         -H,     --hex
 ```
@@ -322,6 +323,21 @@ Print a byte, short, int, and long value as a hex string.
 #### `--hex-float`
 
 Print a float and double value as a hex string.
+
+#### `-e PROGRAM`, `--eval PROGRAM`
+
+Process the perl object given as `$_` before printing the JSON string.
+
+----
+
+- $ `cat sample.nbt | ./nbt2json -pre '$_ = $_->{root}->{L}'`
+
+```
+[
+   1,
+   2
+]
+```
 
 #### `-r`, `--readable`
 
