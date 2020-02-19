@@ -5,7 +5,7 @@ use warnings;
 use utf8;
 use Encode;
 use Data::Dumper;
-use JSON qw/encode_json decode_json/;
+use JSON;
 
 #
 
@@ -23,7 +23,9 @@ sub usage(*$) {
 	print $fh "\t\t--flat-root\n";
 	print $fh "\t\t--flat-list\n";
 	print $fh "\t\t--hex-integer\n";
+	print $fh "\t\t--hex-float\n";
 	print $fh "\t-r,\t--readable\n";
+	print $fh "\t-H,\t--hex\n";
 	exit $code;
 }
 
@@ -35,6 +37,7 @@ my $flat_compound = 0;
 my $flat_root = 0;
 my $flat_list = 0;
 my $hex_integer = 0;
+my $hex_float = 0;
 
 while ($#ARGV > -1) {
 
@@ -92,12 +95,25 @@ while ($#ARGV > -1) {
 		next;
 	}
 
+	if ($ARGV[0] eq "--hex-float") {
+		shift @ARGV;
+		$hex_float = 1;
+		next;
+	}
+
 	if ($ARGV[0] eq "-r" || $ARGV[0] eq "--readable") {
 		shift @ARGV;
 		$root_name = 1;
 		$flat_compound = 1;
 		$flat_root = 1;
 		$flat_list = 1;
+		next;
+	}
+
+	if ($ARGV[0] eq "-H" || $ARGV[0] eq "--hex") {
+		shift @ARGV;
+		$hex_integer = 1;
+		$hex_float = 1;
 		next;
 	}
 
@@ -187,13 +203,21 @@ sub read_long() {
 }
 
 sub read_float() {
-	my $data = read_data(4);
-	return "0x".unpack("H*", $data)."=".sprintf("%.17g", unpack("f>", $data));
+	if ($hex_float) {
+		return "0x".unpack("H*", read_data(4));
+	} else {
+		my $data = read_data(4);
+		return "0x".unpack("H*", $data)."=".sprintf("%.17g", unpack("f>", $data));
+	}
 }
 
 sub read_double() {
-	my $data = read_data(8);
-	return "0x".unpack("H*", $data)."=".sprintf("%.17g", unpack("d>", $data));
+	if ($hex_float) {
+		return "0x".unpack("H*", read_data(8));
+	} else {
+		my $data = read_data(8);
+		return "0x".unpack("H*", $data)."=".sprintf("%.17g", unpack("d>", $data));
+	}
 }
 
 sub read_byte_array() {
