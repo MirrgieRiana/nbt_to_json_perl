@@ -346,6 +346,25 @@ This option is useful with one-liner such as jq.
 3
 ```
 
+### Warnings
+
+It has to noted that JSON often has strange behaviours when processing extremely large 64 bit integers.
+
+- $ `perl -MJSON -E 'say to_json [18446744073709551615,18446744073709551616,-9223372036854775808,-922337203685
+4775809]'`
+  - ```
+    [18446744073709551615,1.84467440737096e+19,-9223372036854775808,-9.22337203685478e+18]
+    ```
+- $ `jq -n '[18446744073709551615,18446744073709551616,-9223372036854775808,-9223372036854775809]'`
+  - ```
+    [
+      18446744073709552000,
+      18446744073709552000,
+      -9223372036854776000,
+      -9223372036854776000
+    ]
+    ```
+
 ### Example
 
 - $ `cat level.dat | ./inflate-gzip | ./nbt2json -r -p`
