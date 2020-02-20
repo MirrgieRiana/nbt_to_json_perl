@@ -24,9 +24,12 @@ sub usage(*$) {
 	print $fh "\t\t--flat-list\n";
 	print $fh "\t\t--hex-integer\n";
 	print $fh "\t\t--hex-float\n";
+	print $fh "\t\t--bin-integer\n";
+	print $fh "\t\t--bin-float\n";
 	print $fh "\t-e,\t--eval PROGRAM\n";
 	print $fh "\t-r,\t--readable\n";
 	print $fh "\t-H,\t--hex\n";
+	print $fh "\t-B,\t--bin\n";
 	exit $code;
 }
 
@@ -39,6 +42,8 @@ my $flat_root = 0;
 my $flat_list = 0;
 my $hex_integer = 0;
 my $hex_float = 0;
+my $bin_integer = 0;
+my $bin_float = 0;
 my $eval;
 
 my @short_options;
@@ -114,6 +119,16 @@ while ($#ARGV > -1 || $#short_options > -1) {
 		next;
 	}
 
+	if (arg "--bin-integer") {
+		$bin_integer = 1;
+		next;
+	}
+
+	if (arg "--bin-float") {
+		$bin_float = 1;
+		next;
+	}
+
 	if (sarg "e" || arg "--eval") {
 		usage *STDERR, 1 unless $#ARGV > -1;
 		$eval = shift @ARGV;
@@ -131,6 +146,12 @@ while ($#ARGV > -1 || $#short_options > -1) {
 	if (sarg "H" || arg "--hex") {
 		$hex_integer = 1;
 		$hex_float = 1;
+		next;
+	}
+
+	if (sarg "B" || arg "--bin") {
+		$bin_integer = 1;
+		$bin_float = 1;
 		next;
 	}
 
@@ -190,6 +211,8 @@ sub read_integer_4() {
 sub read_byte() {
 	if ($hex_integer) {
 		return "0x".unpack("H*", read_data(1));
+	} elsif ($bin_integer) {
+		return "0b".unpack("B*", read_data(1));
 	} else {
 		return unpack("c", read_data(1));
 	}
@@ -198,6 +221,8 @@ sub read_byte() {
 sub read_short() {
 	if ($hex_integer) {
 		return "0x".unpack("H*", read_data(2));
+	} elsif ($bin_integer) {
+		return "0b".unpack("B*", read_data(2));
 	} else {
 		return unpack("s>", read_data(2));
 	}
@@ -206,6 +231,8 @@ sub read_short() {
 sub read_int() {
 	if ($hex_integer) {
 		return "0x".unpack("H*", read_data(4));
+	} elsif ($bin_integer) {
+		return "0b".unpack("B*", read_data(4));
 	} else {
 		return unpack("l>", read_data(4));
 	}
@@ -214,6 +241,8 @@ sub read_int() {
 sub read_long() {
 	if ($hex_integer) {
 		return "0x".unpack("H*", read_data(8));
+	} elsif ($bin_integer) {
+		return "0b".unpack("B*", read_data(8));
 	} else {
 		return unpack("q>", read_data(8));
 	}
@@ -222,6 +251,8 @@ sub read_long() {
 sub read_float() {
 	if ($hex_float) {
 		return "0x".unpack("H*", read_data(4));
+	} elsif ($bin_float) {
+		return "0b".unpack("B*", read_data(4));
 	} else {
 		my $data = read_data(4);
 		return "0x".unpack("H*", $data)."=".sprintf("%.17g", unpack("f>", $data));
@@ -231,6 +262,8 @@ sub read_float() {
 sub read_double() {
 	if ($hex_float) {
 		return "0x".unpack("H*", read_data(8));
+	} elsif ($bin_float) {
+		return "0b".unpack("B*", read_data(8));
 	} else {
 		my $data = read_data(8);
 		return "0x".unpack("H*", $data)."=".sprintf("%.17g", unpack("d>", $data));
@@ -357,8 +390,11 @@ sub read_root() {
 #
 
 binmode STDIN;
-my $json = JSON->new->canonical->ascii;
+my $json = JSON->new->canonical->ascii->allow_nonref;
 $json = $json->indent->space_after if $pretty;
 $_ = read_root();
-eval $eval if defined $eval;
+if (defined $eval) {
+	eval $eval;
+	die if $@;
+}
 print $json->encode($_), "\n";
