@@ -70,9 +70,12 @@ OPTION:
                 --flat-list
                 --hex-integer
                 --hex-float
+                --bin-integer
+                --bin-float
         -e,     --eval PROGRAM
         -r,     --readable
         -H,     --hex
+        -B,     --bin
 ```
 
 #### `--help`
@@ -324,6 +327,38 @@ Print a byte, short, int, and long value as a hex string.
 
 Print a float and double value as a hex string.
 
+#### `--bin-integer`
+
+Print a byte, short, int, and long value as a binary string.
+
+----
+
+- $ `cat sample.nbt | ./nbt2json -p --bin-integer`
+
+```
+{
+   "key": "",
+   "type": 10,
+   "value": [
+      {
+         "key": "L",
+         "type": 9,
+         "value": {
+            "type": 1,
+            "values": [
+               "0b00000001",
+               "0b00000010"
+            ]
+         }
+      }
+   ]
+}
+```
+
+#### `--bin-float`
+
+Print a float and double value as a binary string.
+
 #### `-e PROGRAM`, `--eval PROGRAM`
 
 Process the perl object given as `$_` before printing the JSON string.
@@ -389,6 +424,34 @@ Same as `--hex-integer --hex-float`
             "values": [
                "0x01",
                "0x02"
+            ]
+         }
+      }
+   ]
+}
+```
+
+#### `-B`, `--bin`
+
+Same as `--bin-integer --bin-float`
+
+----
+
+- $ `cat sample.nbt | ./nbt2json -pB`
+
+```
+{
+   "key": "",
+   "type": 10,
+   "value": [
+      {
+         "key": "L",
+         "type": 9,
+         "value": {
+            "type": 1,
+            "values": [
+               "0b00000001",
+               "0b00000010"
             ]
          }
       }
