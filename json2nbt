@@ -242,9 +242,9 @@ sub write_compound($) {
 		for (sort keys %{$_[0]}) {
 			die "Illegal key name: ".$_ if length($_) == 0;
 			write_entry({
-				"type" => substr($_, 0, 1),
-				"key" => $_,
-				"value" => $_[0]->{$_},
+				type => substr($_, 0, 1),
+				key => $_,
+				value => $_[0]->{$_},
 			});
 		}
 	} else {
@@ -283,11 +283,28 @@ sub write_payload($$) {
 	return $a->[2]($value);
 }
 
+sub write_root($) {
+	if ($type_key && ! defined $_[0]->{value}) {
+		my @keys = keys %{$_[0]};
+		die "Illegal root compound" if $#keys + 1 > 1;
+		for ($keys[0]) {
+		die "Illegal key name: ".$_ if length($_) == 0;
+			write_entry({
+				type => substr($_, 0, 1),
+				key => $_,
+				value => $_[0]->{$_},
+			});
+		}
+	} else {
+		write_entry($_[0]);
+	}
+}
+
 #
 
 binmode STDOUT;
 my $json = JSON->new->utf8;
-write_entry($json->decode(do {
+write_root($json->decode(do {
 	local $/;
 	<>;
 }));
