@@ -1,0 +1,129 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use utf8;
+use Encode;
+use Data::Dumper;
+use JSON;
+
+#
+
+my %types = (
+	0 => ["end", "N", 0],
+	1 => ["byte", "B", \&write_byte],
+	2 => ["short", "S", \&write_short],
+	3 => ["int", "I", \&write_int],
+	4 => ["long", "L", \&write_long],
+	5 => ["float", "F", \&write_float],
+	6 => ["double", "D", \&write_double],
+	7 => ["byte_array", "b", \&write_byte_array],
+	8 => ["string", "T", \&write_string],
+	9 => ["list", "A", \&write_list],
+	10 => ["compound", "C", \&write_compound],
+	11 => ["int_array", "i", \&write_int_array],
+	12 => ["long_array", "l", \&write_long_array],
+);
+
+sub write_data($) {
+	print($_[0]);
+}
+
+sub write_integer_1($) {
+	write_data(pack("c", $_[0]));
+}
+
+sub write_integer_2($) {
+	write_data(pack("s>", $_[0]));
+}
+
+sub write_integer_4($) {
+	write_data(pack("l>", $_[0]));
+}
+
+sub write_byte($) {
+	write_data(pack("c", $_[0]));
+}
+
+sub write_short($) {
+	write_data(pack("s>", $_[0]));
+}
+
+sub write_int($) {
+	write_data(pack("l>", $_[0]));
+}
+
+sub write_long($) {
+	write_data(pack("q>", $_[0]));
+}
+
+sub write_float($) {
+	if ($_[0] =~ /\A0x([0-9a-zA-Z]{8})(?:=|\Z)/) {
+		write_data(pack("H*", $1));
+	} else {
+		die "Illegal float format";
+	}
+}
+
+sub write_double($) {
+	if ($_[0] =~ /\A0x([0-9a-zA-Z]{16})(?:=|\Z)/) {
+		write_data(pack("H*", $1));
+	} else {
+		die "Illegal float format";
+	}
+}
+
+sub write_byte_array($) {
+	write_integer_4($#{$_[0]} + 1);
+	write_byte($_) for @{$_[0]};
+}
+
+sub write_string($) {
+	my $data = encode("utf8", $_[0]);
+	write_integer_2(length($data));
+	write_data($data);
+}
+
+sub write_list($) {
+	write_integer_1($_[0]->{type});
+	write_integer_4($#{$_[0]->{values}} + 1);
+	write_payload($_[0]->{type}, $_) for @{$_[0]->{values}};
+}
+
+sub write_compound($) {
+	write_entry($_) for @{$_[0]};
+	write_integer_1(0);
+}
+
+sub write_entry($) {
+	write_integer_1($_[0]->{type});
+	write_string($_[0]->{key});
+	write_payload($_[0]->{type}, $_[0]->{value});
+}
+
+sub write_int_array($) {
+	write_integer_4($#{$_[0]} + 1);
+	write_int($_) for @{$_[0]};
+}
+
+sub write_long_array($) {
+	write_integer_4($#{$_[0]} + 1);
+	write_long($_) for @{$_[0]};
+}
+
+sub write_payload($$) {
+	my $type = shift;
+	my $value = shift;
+	my $a = $types{$type};
+	die "Unknown Type: $type" if ! defined $a;
+	return $a->[2]($value);
+}
+
+#
+
+binmode STDOUT;
+my $json = JSON->new;
+write_entry($json->decode(do {
+	local $/;
+	<>;
+}));
