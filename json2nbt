@@ -25,6 +25,15 @@ my %types = (
 	12 => ["long_array", "l", \&write_long_array],
 );
 
+sub convert_type($) {
+	for (keys %types) {
+		if ($types{$_}->[0] eq $_[0]) {
+			$_[0] = $_;
+		}
+	}
+	return $_[0];
+}
+
 sub write_data($) {
 	print($_[0]);
 }
@@ -161,6 +170,7 @@ sub write_string($) {
 }
 
 sub write_list($) {
+	$_[0]->{type} = convert_type($_[0]->{type});
 	write_integer_1($_[0]->{type});
 	write_integer_4($#{$_[0]->{values}} + 1);
 	write_payload($_[0]->{type}, $_) for @{$_[0]->{values}};
@@ -172,6 +182,7 @@ sub write_compound($) {
 }
 
 sub write_entry($) {
+	$_[0]->{type} = convert_type($_[0]->{type});
 	write_integer_1($_[0]->{type});
 	write_string($_[0]->{key});
 	write_payload($_[0]->{type}, $_[0]->{value});
