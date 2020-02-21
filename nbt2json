@@ -157,6 +157,7 @@ while ($#ARGV > -1 || $#short_options > -1) {
 	}
 
 	if (sarg "c" || arg "--readable-compound") {
+		$type_name = 1;
 		$type_key = 1;
 		$flat_compound = 1;
 		next;
