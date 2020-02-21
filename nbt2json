@@ -30,6 +30,7 @@ sub usage(*$) {
 	print $fh "\t-r,\t--readable\n";
 	print $fh "\t-H,\t--hex\n";
 	print $fh "\t-B,\t--bin\n";
+	print $fh "\t-c,\t--readable-compound\n";
 	exit $code;
 }
 
@@ -152,6 +153,12 @@ while ($#ARGV > -1 || $#short_options > -1) {
 	if (sarg "B" || arg "--bin") {
 		$bin_integer = 1;
 		$bin_float = 1;
+		next;
+	}
+
+	if (sarg "c" || arg "--readable-compound") {
+		$type_key = 1;
+		$flat_compound = 1;
 		next;
 	}
 

@@ -16,6 +16,7 @@ sub usage(*$) {
 	print $fh "OPTION:\n";
 	print $fh "\t\t--help\n";
 	print $fh "\t\t--type-key\n";
+	print $fh "\t-c,\t--readable-compound\n";
 	exit $code;
 }
 
@@ -50,6 +51,11 @@ while ($#ARGV > -1 || $#short_options > -1) {
 	}
 
 	if (arg "--type-key") {
+		$type_key = 1;
+		next;
+	}
+
+	if (sarg "c" || arg "--readable-compound") {
 		$type_key = 1;
 		next;
 	}
