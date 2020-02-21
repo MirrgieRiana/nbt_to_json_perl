@@ -9,6 +9,56 @@ use JSON;
 
 #
 
+sub usage(*$) {
+	my $fh = shift;
+	my $code = shift;
+	print $fh "Usage: ".__FILE__." [OPTIONS...]\n";
+	print $fh "OPTION:\n";
+	print $fh "\t\t--help\n";
+	print $fh "\t\t--type-key\n";
+	exit $code;
+}
+
+my $type_key = 0;
+
+my @short_options;
+sub arg($) {
+	if ($#short_options == -1 && $#ARGV > -1 && $ARGV[0] eq $_[0]) {
+		shift @ARGV;
+		return 1;
+	}
+	return 0;
+}
+sub sarg($) {
+	if ($#short_options > -1 && $short_options[0] eq $_[0]) {
+		shift @short_options;
+		return 1;
+	}
+	return 0;
+}
+while ($#ARGV > -1 || $#short_options > -1) {
+
+	if ($#short_options == -1 && $ARGV[0] =~ /^-([a-zA-Z0-9]+)$/) {
+		shift @ARGV;
+		@short_options = split //, $1;
+		next;
+	}
+
+	if (arg "--help") {
+		usage *STDOUT, 0;
+		next;
+	}
+
+	if (arg "--type-key") {
+		$type_key = 1;
+		next;
+	}
+
+	usage *STDERR, 1;
+}
+
+#
+
 my %types = (
 	0 => ["end", "N", 0],
 	1 => ["byte", "B", \&write_byte],
@@ -28,6 +78,9 @@ my %types = (
 sub convert_type($) {
 	for (keys %types) {
 		if ($types{$_}->[0] eq $_[0]) {
+			$_[0] = $_;
+		}
+		if ($types{$_}->[1] eq $_[0]) {
 			$_[0] = $_;
 		}
 	}
@@ -177,14 +230,32 @@ sub write_list($) {
 }
 
 sub write_compound($) {
-	write_entry($_) for @{$_[0]};
+	if (ref($_[0]) eq "ARRAY") {
+		write_entry($_) for @{$_[0]};
+	} elsif ($type_key && ref($_[0]) eq "HASH") {
+		for (sort keys %{$_[0]}) {
+			die "Illegal key name: ".$_ if length($_) == 0;
+			write_entry({
+				"type" => substr($_, 0, 1),
+				"key" => $_,
+				"value" => $_[0]->{$_},
+			});
+		}
+	} else {
+		die "Illegal compound value";
+	}
 	write_integer_1(0);
 }
 
 sub write_entry($) {
 	$_[0]->{type} = convert_type($_[0]->{type});
 	write_integer_1($_[0]->{type});
-	write_string($_[0]->{key});
+	if ($type_key) {
+		die "Illegal key name: ".$_[0]->{key} if length($_[0]->{key}) == 0;
+		write_string(substr($_[0]->{key}, 1));
+	} else {
+		write_string($_[0]->{key});
+	}
 	write_payload($_[0]->{type}, $_[0]->{value});
 }
 
