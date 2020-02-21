@@ -42,35 +42,111 @@ sub write_integer_4($) {
 }
 
 sub write_byte($) {
-	write_data(pack("c", $_[0]));
+	if (! ref $_[0]) {
+		if ($_[0] =~ /\A0x([0-9a-zA-Z]{2})(?:=|\z)/) {
+			write_data(pack("H*", $1));
+			return;
+		}
+		if ($_[0] =~ /\A0b([0-9a-zA-Z]{8})(?:=|\z)/) {
+			write_data(pack("B*", $1));
+			return;
+		}
+		if ($_[0] =~ /\A([0-9a-zA-Z+\-.]*)(?:=|\z)/) {
+			write_data(pack("c", $1));
+			return;
+		}
+	}
+	die "Illegal format";
 }
 
 sub write_short($) {
-	write_data(pack("s>", $_[0]));
+	if (! ref $_[0]) {
+		if ($_[0] =~ /\A0x([0-9a-zA-Z]{4})(?:=|\z)/) {
+			write_data(pack("H*", $1));
+			return;
+		}
+		if ($_[0] =~ /\A0b([0-9a-zA-Z]{16})(?:=|\z)/) {
+			write_data(pack("B*", $1));
+			return;
+		}
+		if ($_[0] =~ /\A([0-9a-zA-Z+\-.]*)(?:=|\z)/) {
+			write_data(pack("s>", $1));
+			return;
+		}
+	}
+	die "Illegal format";
 }
 
 sub write_int($) {
-	write_data(pack("l>", $_[0]));
+	if (! ref $_[0]) {
+		if ($_[0] =~ /\A0x([0-9a-zA-Z]{8})(?:=|\z)/) {
+			write_data(pack("H*", $1));
+			return;
+		}
+		if ($_[0] =~ /\A0b([0-9a-zA-Z]{32})(?:=|\z)/) {
+			write_data(pack("B*", $1));
+			return;
+		}
+		if ($_[0] =~ /\A([0-9a-zA-Z+\-.]*)(?:=|\z)/) {
+			write_data(pack("l>", $1));
+			return;
+		}
+	}
+	die "Illegal format";
 }
 
 sub write_long($) {
-	write_data(pack("q>", $_[0]));
+	if (! ref $_[0]) {
+		if ($_[0] =~ /\A0x([0-9a-zA-Z]{16})(?:=|\z)/) {
+			write_data(pack("H*", $1));
+			return;
+		}
+		if ($_[0] =~ /\A0b([0-9a-zA-Z]{64})(?:=|\z)/) {
+			write_data(pack("B*", $1));
+			return;
+		}
+		if ($_[0] =~ /\A([0-9a-zA-Z+\-.]*)(?:=|\z)/) {
+			write_data(pack("q>", $1));
+			return;
+		}
+	}
+	die "Illegal format";
 }
 
 sub write_float($) {
-	if ($_[0] =~ /\A0x([0-9a-zA-Z]{8})(?:=|\Z)/) {
-		write_data(pack("H*", $1));
-	} else {
-		die "Illegal float format";
+	if (! ref $_[0]) {
+		if ($_[0] =~ /\A0x([0-9a-zA-Z]{8})(?:=|\z)/) {
+			write_data(pack("H*", $1));
+			return;
+		}
+		if ($_[0] =~ /\A0b([0-9a-zA-Z]{32})(?:=|\z)/) {
+			write_data(pack("B*", $1));
+			return;
+		}
+		if ($_[0] =~ /\A([0-9a-zA-Z+\-.]*)(?:=|\z)/) {
+			write_data(pack("f>", $1));
+			return;
+		}
 	}
+	die "Illegal format";
 }
 
 sub write_double($) {
-	if ($_[0] =~ /\A0x([0-9a-zA-Z]{16})(?:=|\Z)/) {
-		write_data(pack("H*", $1));
-	} else {
-		die "Illegal float format";
+	if (! ref $_[0]) {
+		if ($_[0] =~ /\A0x([0-9a-zA-Z]{16})(?:=|\z)/) {
+			write_data(pack("H*", $1));
+			return;
+		}
+		if ($_[0] =~ /\A0b([0-9a-zA-Z]{64})(?:=|\z)/) {
+			write_data(pack("B*", $1));
+			return;
+		}
+		if ($_[0] =~ /\A([0-9a-zA-Z+\-.]*)(?:=|\z)/) {
+			write_data(pack("d>", $1));
+			return;
+		}
 	}
+	die "Illegal format";
 }
 
 sub write_byte_array($) {
