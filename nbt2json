@@ -398,7 +398,7 @@ sub read_root() {
 #
 
 binmode STDIN;
-my $json = JSON->new->canonical->ascii->allow_nonref;
+my $json = JSON->new->utf8->canonical->ascii->allow_nonref;
 $json = $json->indent->space_after if $pretty;
 $_ = read_root();
 if (defined $eval) {

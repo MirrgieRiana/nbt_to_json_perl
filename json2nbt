@@ -286,7 +286,7 @@ sub write_payload($$) {
 #
 
 binmode STDOUT;
-my $json = JSON->new;
+my $json = JSON->new->utf8;
 write_entry($json->decode(do {
 	local $/;
 	<>;
