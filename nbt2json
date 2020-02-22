@@ -406,4 +406,5 @@ if (defined $eval) {
 	eval $eval;
 	die if $@;
 }
-print $json->encode($_), "\n";
+print $json->encode($_);
+print "\n" if ! $pretty;
