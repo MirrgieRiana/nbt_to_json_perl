@@ -137,13 +137,21 @@ This option can be used without making the reverse conversion of the output data
 
 - $ `cat sample/1.nbt | ./nbt2json`
 
+<details>
+<summary>Example</summary>
+
 ```
 {"key":"","type":10,"value":[{"key":"list","type":9,"value":{"type":1,"values":[1,2]}},{"key":"double","type":6,"value":"0x3fd0000000000000=0.25"},{"key":"int","type":3,"value":-1}]}
 ```
 
+</details>
+
 ↓
 
 - $ `cat sample/1.nbt | ./nbt2json -p`
+
+<details>
+<summary>Example</summary>
 
 ```
 {
@@ -175,6 +183,8 @@ This option can be used without making the reverse conversion of the output data
 }
 ```
 
+</details>
+
 #### `--root-name`
 
 Force root tag name to be `root`.
@@ -184,6 +194,9 @@ Force root tag name to be `root`.
 ----
 
 - $ `cat sample/1.nbt | ./nbt2json -p --root-name`
+
+<details>
+<summary>Example</summary>
 
 ```
 {
@@ -215,6 +228,8 @@ Force root tag name to be `root`.
 }
 ```
 
+</details>
+
 #### `--type-name`
 
 Type is represented by name, not type ID.
@@ -224,6 +239,9 @@ This option can be used without making the reverse conversion of the output data
 ----
 
 - $ `cat sample/1.nbt | ./nbt2json -p --type-name`
+
+<details>
+<summary>Example</summary>
 
 ```
 {
@@ -255,6 +273,8 @@ This option can be used without making the reverse conversion of the output data
 }
 ```
 
+</details>
+
 #### `--type-key`
 
 Tag key starts with a character representing the type.
@@ -282,6 +302,9 @@ This option can be used without making the reverse conversion of the output data
 ----
 
 - $ `cat sample/1.nbt | ./nbt2json -p --type-key`
+
+<details>
+<summary>Example</summary>
 
 ```
 {
@@ -313,6 +336,8 @@ This option can be used without making the reverse conversion of the output data
 }
 ```
 
+</details>
+
 #### `--flat-compound`
 
 The content of a compound tag is a JSON object instead of a list of tag structures.
@@ -324,6 +349,9 @@ The content of a compound tag is a JSON object instead of a list of tag structur
 ----
 
 - $ `cat sample/1.nbt | ./nbt2json -p --flat-compound`
+
+<details>
+<summary>Example</summary>
 
 ```
 {
@@ -343,6 +371,8 @@ The content of a compound tag is a JSON object instead of a list of tag structur
 }
 ```
 
+</details>
+
 #### `--flat-root`
 
 The root tag is a JSON object instead of a tag structure.
@@ -354,6 +384,9 @@ The root tag is a JSON object instead of a tag structure.
 ----
 
 - $ `cat sample/1.nbt | ./nbt2json -p --flat-root`
+
+<details>
+<summary>Example</summary>
 
 ```
 {
@@ -383,6 +416,8 @@ The root tag is a JSON object instead of a tag structure.
 }
 ```
 
+</details>
+
 #### `--flat-list`
 
 The content of a list tag is a JSON array instead of a structure containing type and values.
@@ -392,6 +427,9 @@ The content of a list tag is a JSON array instead of a structure containing type
 ----
 
 - $ `cat sample/1.nbt | ./nbt2json -p --flat-list`
+
+<details>
+<summary>Example</summary>
 
 ```
 {
@@ -420,6 +458,8 @@ The content of a list tag is a JSON array instead of a structure containing type
 }
 ```
 
+</details>
+
 #### `--hex-integer`
 
 Print a byte, short, int, and long value as a hex string.
@@ -429,6 +469,9 @@ This option can be used without making the reverse conversion of the output data
 ----
 
 - $ `cat sample/1.nbt | ./nbt2json -p --hex-integer`
+
+<details>
+<summary>Example</summary>
 
 ```
 {
@@ -460,6 +503,8 @@ This option can be used without making the reverse conversion of the output data
 }
 ```
 
+</details>
+
 #### `--hex-float`
 
 Print a float and double value as a hex string.
@@ -469,6 +514,9 @@ This option can be used without making the reverse conversion of the output data
 ----
 
 - $ `cat sample/1.nbt | ./nbt2json -p --hex-float`
+
+<details>
+<summary>Example</summary>
 
 ```
 {
@@ -500,6 +548,8 @@ This option can be used without making the reverse conversion of the output data
 }
 ```
 
+</details>
+
 #### `--bin-integer`
 
 Print a byte, short, int, and long value as a binary string.
@@ -509,6 +559,9 @@ This option can be used without making the reverse conversion of the output data
 ----
 
 - $ `cat sample/1.nbt | ./nbt2json -p --bin-integer`
+
+<details>
+<summary>Example</summary>
 
 ```
 {
@@ -540,6 +593,8 @@ This option can be used without making the reverse conversion of the output data
 }
 ```
 
+</details>
+
 #### `--bin-float`
 
 Print a float and double value as a binary string.
@@ -549,6 +604,9 @@ This option can be used without making the reverse conversion of the output data
 ----
 
 - $ `cat sample/1.nbt | ./nbt2json -p --bin-float`
+
+<details>
+<summary>Example</summary>
 
 ```
 {
@@ -580,6 +638,8 @@ This option can be used without making the reverse conversion of the output data
 }
 ```
 
+</details>
+
 #### `-e PROGRAM`, `--eval PROGRAM`
 
 Process the perl program before printing the JSON string.
@@ -591,6 +651,9 @@ You can process data using `$_`.
 
 - $ `cat sample/1.nbt | ./nbt2json -pc -e '$_ = $_->{C}->{Alist}'`
 
+<details>
+<summary>Example</summary>
+
 ```
 {
    "type": "byte",
@@ -601,6 +664,8 @@ You can process data using `$_`.
 }
 ```
 
+</details>
+
 #### `-r`, `--readable`
 
 Same as `--root-name --flat-compound --flat-root --flat-list`
@@ -610,6 +675,9 @@ Same as `--root-name --flat-compound --flat-root --flat-list`
 ----
 
 - $ `cat sample/1.nbt | ./nbt2json -pr`
+
+<details>
+<summary>Example</summary>
 
 ```
 {
@@ -624,6 +692,8 @@ Same as `--root-name --flat-compound --flat-root --flat-list`
 }
 ```
 
+</details>
+
 #### `-H`, `--hex`
 
 Same as `--hex-integer --hex-float`
@@ -633,6 +703,9 @@ This option can be used without making the reverse conversion of the output data
 ----
 
 - $ `cat sample/1.nbt | ./nbt2json -pH`
+
+<details>
+<summary>Example</summary>
 
 ```
 {
@@ -664,6 +737,8 @@ This option can be used without making the reverse conversion of the output data
 }
 ```
 
+</details>
+
 #### `-B`, `--bin`
 
 Same as `--bin-integer --bin-float`
@@ -673,6 +748,9 @@ This option can be used without making the reverse conversion of the output data
 ----
 
 - $ `cat sample/1.nbt | ./nbt2json -pB`
+
+<details>
+<summary>Example</summary>
 
 ```
 {
@@ -704,6 +782,8 @@ This option can be used without making the reverse conversion of the output data
 }
 ```
 
+</details>
+
 #### `-c`, `--readable-compound`
 
 Same as `--type-name --type-key --flat-compound --flat-root`
@@ -713,6 +793,9 @@ This option makes safely the output data useful and breaks the order of compound
 ----
 
 - $ `cat sample/1.nbt | ./nbt2json -pc`
+
+<details>
+<summary>Example</summary>
 
 ```
 {
@@ -730,15 +813,22 @@ This option makes safely the output data useful and breaks the order of compound
 }
 ```
 
+</details>
+
 ----
 
 This option is useful for using with one-liner such as jq.
 
 - $ `cat sample/1.nbt | ./nbt2json -c | jq '.C.Alist.values | add'`
 
+<details>
+<summary>Example</summary>
+
 ```
 3
 ```
+
+</details>
 
 ### Warnings
 
