@@ -1,0 +1,13 @@
+{
+   "C": {
+      "Alist": {
+         "type": "byte",
+         "values": [
+            1,
+            2
+         ]
+      },
+      "Iint": -1,
+      "Ddouble": 0.25
+   }
+}
