@@ -1,18 +1,58 @@
 # Name
 
-NBT to JSON Perl - A command line tool to convert NBT and JSON written in Perl
+NBT to JSON Perl - Command line tools to convert NBT and JSON written in Perl
 
 # Synopsis
 
-- $ `cat sample.nbt | ./nbt2json -p -r`
+When `nbt2json` caught NBT binary data from stdin, outputs the JSON string expression.
+
+- $ `cat sample/1.nbt | ./nbt2json`
+
+```
+{"key":"","type":10,"value":[{"key":"list","type":9,"value":{"type":1,"values":[1,2]}},{"key":"double","type":6,"value":"0x3fd0000000000000=0.25"},{"key":"int","type":3,"value":-1}]}
+```
+
+----
+
+Add `-cp` to `nbt2json` to print useful and formatted JSON string.
+
+- $ `cat sample/1.nbt | ./nbt2json -cp`
 
 ```
 {
-   "root": {
-      "L": [
-         1,
-         2
-      ]
+   "C": {
+      "Alist": {
+         "type": "byte",
+         "values": [
+            1,
+            2
+         ]
+      },
+      "Ddouble": "0x3fd0000000000000=0.25",
+      "Iint": -1
+   }
+}
+```
+
+---
+
+`json2nbt -c` is the inverse function of `nbt2json -cp`.
+So you can convert NBT binary to JSON string and modify the JSON string and convert it to NBT binary again.
+
+- $ `cat sample/1.nbt | ./nbt2json -cp | ./json2nbt -c | ./nbt2json -cp`
+
+```
+{
+   "C": {
+      "Alist": {
+         "type": "byte",
+         "values": [
+            1,
+            2
+         ]
+      },
+      "Ddouble": "0x3fd0000000000000=0.25",
+      "Iint": -1
    }
 }
 ```
@@ -53,9 +93,11 @@ Decompress the gzip data.
 
 ## `nbt2json`
 
-Read uncompressed NBT binary from stdin and print JSON string to stdout.
+Read uncompressed NBT binary data from stdin and print JSON string to stdout.
 
 ### Usage
+
+- $ `./nbt2json --help`
 
 ```
 Usage: ./nbt2json [OPTIONS...]
@@ -76,6 +118,7 @@ OPTION:
         -r,     --readable
         -H,     --hex
         -B,     --bin
+        -c,     --readable-compound
 ```
 
 #### `--help`
@@ -88,17 +131,19 @@ Print help message.
 
 Format JSON string.
 
+This option can be used without making the reverse conversion of the output data impossible.
+
 ----
 
-- $ `cat sample.nbt | ./nbt2json`
+- $ `cat sample/1.nbt | ./nbt2json`
 
 ```
-{"key":"","type":10,"value":[{"key":"L","type":9,"value":{"type":1,"values":[1,2]}}]}
+{"key":"","type":10,"value":[{"key":"list","type":9,"value":{"type":1,"values":[1,2]}},{"key":"double","type":6,"value":"0x3fd0000000000000=0.25"},{"key":"int","type":3,"value":-1}]}
 ```
 
 ↓
 
-- $ `cat sample.nbt | ./nbt2json -p`
+- $ `cat sample/1.nbt | ./nbt2json -p`
 
 ```
 {
@@ -106,7 +151,7 @@ Format JSON string.
    "type": 10,
    "value": [
       {
-         "key": "L",
+         "key": "list",
          "type": 9,
          "value": {
             "type": 1,
@@ -115,6 +160,16 @@ Format JSON string.
                2
             ]
          }
+      },
+      {
+         "key": "double",
+         "type": 6,
+         "value": "0x3fd0000000000000=0.25"
+      },
+      {
+         "key": "int",
+         "type": 3,
+         "value": -1
       }
    ]
 }
@@ -124,9 +179,11 @@ Format JSON string.
 
 Force root tag name to be `root`.
 
+**Note: This option makes the reverse conversion of the output data impossible.**
+
 ----
 
-- $ `cat sample.nbt | ./nbt2json -p --root-name`
+- $ `cat sample/1.nbt | ./nbt2json -p --root-name`
 
 ```
 {
@@ -134,7 +191,7 @@ Force root tag name to be `root`.
    "type": 10,
    "value": [
       {
-         "key": "L",
+         "key": "list",
          "type": 9,
          "value": {
             "type": 1,
@@ -143,6 +200,16 @@ Force root tag name to be `root`.
                2
             ]
          }
+      },
+      {
+         "key": "double",
+         "type": 6,
+         "value": "0x3fd0000000000000=0.25"
+      },
+      {
+         "key": "int",
+         "type": 3,
+         "value": -1
       }
    ]
 }
@@ -152,9 +219,11 @@ Force root tag name to be `root`.
 
 Type is represented by name, not type ID.
 
+This option can be used without making the reverse conversion of the output data impossible.
+
 ----
 
-- $ `cat sample.nbt | ./nbt2json -p --type-name`
+- $ `cat sample/1.nbt | ./nbt2json -p --type-name`
 
 ```
 {
@@ -162,7 +231,7 @@ Type is represented by name, not type ID.
    "type": "compound",
    "value": [
       {
-         "key": "L",
+         "key": "list",
          "type": "list",
          "value": {
             "type": "byte",
@@ -171,6 +240,16 @@ Type is represented by name, not type ID.
                2
             ]
          }
+      },
+      {
+         "key": "double",
+         "type": "double",
+         "value": "0x3fd0000000000000=0.25"
+      },
+      {
+         "key": "int",
+         "type": "int",
+         "value": -1
       }
    ]
 }
@@ -196,9 +275,13 @@ Tag key starts with a character representing the type.
 |11|int_array|i|
 |12|long_array|l|
 
+This option can be used without making the reverse conversion of the output data impossible.
+
+**Note: Output data printed with this option must be reverse-converted with the same option.**
+
 ----
 
-- $ `cat sample.nbt | ./nbt2json -p --type-key`
+- $ `cat sample/1.nbt | ./nbt2json -p --type-key`
 
 ```
 {
@@ -206,7 +289,7 @@ Tag key starts with a character representing the type.
    "type": 10,
    "value": [
       {
-         "key": "AL",
+         "key": "Alist",
          "type": 9,
          "value": {
             "type": 1,
@@ -215,6 +298,16 @@ Tag key starts with a character representing the type.
                2
             ]
          }
+      },
+      {
+         "key": "Ddouble",
+         "type": 6,
+         "value": "0x3fd0000000000000=0.25"
+      },
+      {
+         "key": "Iint",
+         "type": 3,
+         "value": -1
       }
    ]
 }
@@ -224,16 +317,22 @@ Tag key starts with a character representing the type.
 
 The content of a compound tag is a JSON object instead of a list of tag structures.
 
+**Note: Without `--type-key` option, this option makes the reverse conversion of the output data impossible.**
+
+**Note: Because the order of the tags is not preserved, the reverse conversion generally does not produce the same data.**
+
 ----
 
-- $ `cat sample.nbt | ./nbt2json -p --flat-compound`
+- $ `cat sample/1.nbt | ./nbt2json -p --flat-compound`
 
 ```
 {
    "key": "",
    "type": 10,
    "value": {
-      "L": {
+      "double": "0x3fd0000000000000=0.25",
+      "int": -1,
+      "list": {
          "type": 1,
          "values": [
             1,
@@ -248,15 +347,19 @@ The content of a compound tag is a JSON object instead of a list of tag structur
 
 The root tag is a JSON object instead of a tag structure.
 
+**Note: Without `--type-key` option, this option makes the reverse conversion of the output data impossible.**
+
+**Note: Because the order of the tags is not preserved, the reverse conversion generally does not produce the same data.**
+
 ----
 
-- $ `cat sample.nbt | ./nbt2json -p --flat-root`
+- $ `cat sample/1.nbt | ./nbt2json -p --flat-root`
 
 ```
 {
    "": [
       {
-         "key": "L",
+         "key": "list",
          "type": 9,
          "value": {
             "type": 1,
@@ -265,6 +368,16 @@ The root tag is a JSON object instead of a tag structure.
                2
             ]
          }
+      },
+      {
+         "key": "double",
+         "type": 6,
+         "value": "0x3fd0000000000000=0.25"
+      },
+      {
+         "key": "int",
+         "type": 3,
+         "value": -1
       }
    ]
 }
@@ -274,9 +387,11 @@ The root tag is a JSON object instead of a tag structure.
 
 The content of a list tag is a JSON array instead of a structure containing type and values.
 
+**Note: This option makes the reverse conversion of the output data impossible.**
+
 ----
 
-- $ `cat sample.nbt | ./nbt2json -p --flat-list`
+- $ `cat sample/1.nbt | ./nbt2json -p --flat-list`
 
 ```
 {
@@ -284,12 +399,22 @@ The content of a list tag is a JSON array instead of a structure containing type
    "type": 10,
    "value": [
       {
-         "key": "L",
+         "key": "list",
          "type": 9,
          "value": [
             1,
             2
          ]
+      },
+      {
+         "key": "double",
+         "type": 6,
+         "value": "0x3fd0000000000000=0.25"
+      },
+      {
+         "key": "int",
+         "type": 3,
+         "value": -1
       }
    ]
 }
@@ -299,9 +424,11 @@ The content of a list tag is a JSON array instead of a structure containing type
 
 Print a byte, short, int, and long value as a hex string.
 
+This option can be used without making the reverse conversion of the output data impossible.
+
 ----
 
-- $ `cat sample.nbt | ./nbt2json -p --hex-integer`
+- $ `cat sample/1.nbt | ./nbt2json -p --hex-integer`
 
 ```
 {
@@ -309,7 +436,7 @@ Print a byte, short, int, and long value as a hex string.
    "type": 10,
    "value": [
       {
-         "key": "L",
+         "key": "list",
          "type": 9,
          "value": {
             "type": 1,
@@ -318,6 +445,16 @@ Print a byte, short, int, and long value as a hex string.
                "0x02"
             ]
          }
+      },
+      {
+         "key": "double",
+         "type": 6,
+         "value": "0x3fd0000000000000=0.25"
+      },
+      {
+         "key": "int",
+         "type": 3,
+         "value": "0xffffffff"
       }
    ]
 }
@@ -327,13 +464,11 @@ Print a byte, short, int, and long value as a hex string.
 
 Print a float and double value as a hex string.
 
-#### `--bin-integer`
-
-Print a byte, short, int, and long value as a binary string.
+This option can be used without making the reverse conversion of the output data impossible.
 
 ----
 
-- $ `cat sample.nbt | ./nbt2json -p --bin-integer`
+- $ `cat sample/1.nbt | ./nbt2json -p --hex-float`
 
 ```
 {
@@ -341,7 +476,47 @@ Print a byte, short, int, and long value as a binary string.
    "type": 10,
    "value": [
       {
-         "key": "L",
+         "key": "list",
+         "type": 9,
+         "value": {
+            "type": 1,
+            "values": [
+               1,
+               2
+            ]
+         }
+      },
+      {
+         "key": "double",
+         "type": 6,
+         "value": "0x3fd0000000000000"
+      },
+      {
+         "key": "int",
+         "type": 3,
+         "value": -1
+      }
+   ]
+}
+```
+
+#### `--bin-integer`
+
+Print a byte, short, int, and long value as a binary string.
+
+This option can be used without making the reverse conversion of the output data impossible.
+
+----
+
+- $ `cat sample/1.nbt | ./nbt2json -p --bin-integer`
+
+```
+{
+   "key": "",
+   "type": 10,
+   "value": [
+      {
+         "key": "list",
          "type": 9,
          "value": {
             "type": 1,
@@ -350,6 +525,16 @@ Print a byte, short, int, and long value as a binary string.
                "0b00000010"
             ]
          }
+      },
+      {
+         "key": "double",
+         "type": 6,
+         "value": "0x3fd0000000000000=0.25"
+      },
+      {
+         "key": "int",
+         "type": 3,
+         "value": "0b11111111111111111111111111111111"
       }
    ]
 }
@@ -359,57 +544,11 @@ Print a byte, short, int, and long value as a binary string.
 
 Print a float and double value as a binary string.
 
-#### `-e PROGRAM`, `--eval PROGRAM`
-
-Process the perl object given as `$_` before printing the JSON string.
+This option can be used without making the reverse conversion of the output data impossible.
 
 ----
 
-- $ `cat sample.nbt | ./nbt2json -pre '$_ = $_->{root}->{L}'`
-
-```
-[
-   1,
-   2
-]
-```
-
-#### `-r`, `--readable`
-
-Same as `--root-name --flat-compound --flat-root --flat-list`
-
-----
-
-- $ `cat sample.nbt | ./nbt2json -pr`
-
-```
-{
-   "root": {
-      "L": [
-         1,
-         2
-      ]
-   }
-}
-```
-
-----
-
-This option is useful with one-liner such as jq.
-
-- $ `cat sample.nbt | ./nbt2json -r | jq '.root.L | add'`
-
-```
-3
-```
-
-#### `-H`, `--hex`
-
-Same as `--hex-integer --hex-float`
-
-----
-
-- $ `cat sample.nbt | ./nbt2json -pH`
+- $ `cat sample/1.nbt | ./nbt2json -p --bin-float`
 
 ```
 {
@@ -417,7 +556,91 @@ Same as `--hex-integer --hex-float`
    "type": 10,
    "value": [
       {
-         "key": "L",
+         "key": "list",
+         "type": 9,
+         "value": {
+            "type": 1,
+            "values": [
+               1,
+               2
+            ]
+         }
+      },
+      {
+         "key": "double",
+         "type": 6,
+         "value": "0b0011111111010000000000000000000000000000000000000000000000000000"
+      },
+      {
+         "key": "int",
+         "type": 3,
+         "value": -1
+      }
+   ]
+}
+```
+
+#### `-e PROGRAM`, `--eval PROGRAM`
+
+Process the perl program before printing the JSON string.
+You can process data using `$_`.
+
+**Note: This option can make the reverse conversion of the output data impossible.**
+
+----
+
+- $ `cat sample/1.nbt | ./nbt2json -pc -e '$_ = $_->{C}->{Alist}'`
+
+```
+{
+   "type": "byte",
+   "values": [
+      1,
+      2
+   ]
+}
+```
+
+#### `-r`, `--readable`
+
+Same as `--root-name --flat-compound --flat-root --flat-list`
+
+**Note: This option makes the reverse conversion of the output data impossible.**
+
+----
+
+- $ `cat sample/1.nbt | ./nbt2json -pr`
+
+```
+{
+   "root": {
+      "double": "0x3fd0000000000000=0.25",
+      "int": -1,
+      "list": [
+         1,
+         2
+      ]
+   }
+}
+```
+
+#### `-H`, `--hex`
+
+Same as `--hex-integer --hex-float`
+
+This option can be used without making the reverse conversion of the output data impossible.
+
+----
+
+- $ `cat sample/1.nbt | ./nbt2json -pH`
+
+```
+{
+   "key": "",
+   "type": 10,
+   "value": [
+      {
+         "key": "list",
          "type": 9,
          "value": {
             "type": 1,
@@ -426,6 +649,16 @@ Same as `--hex-integer --hex-float`
                "0x02"
             ]
          }
+      },
+      {
+         "key": "double",
+         "type": 6,
+         "value": "0x3fd0000000000000"
+      },
+      {
+         "key": "int",
+         "type": 3,
+         "value": "0xffffffff"
       }
    ]
 }
@@ -435,9 +668,11 @@ Same as `--hex-integer --hex-float`
 
 Same as `--bin-integer --bin-float`
 
+This option can be used without making the reverse conversion of the output data impossible.
+
 ----
 
-- $ `cat sample.nbt | ./nbt2json -pB`
+- $ `cat sample/1.nbt | ./nbt2json -pB`
 
 ```
 {
@@ -445,7 +680,7 @@ Same as `--bin-integer --bin-float`
    "type": 10,
    "value": [
       {
-         "key": "L",
+         "key": "list",
          "type": 9,
          "value": {
             "type": 1,
@@ -454,9 +689,55 @@ Same as `--bin-integer --bin-float`
                "0b00000010"
             ]
          }
+      },
+      {
+         "key": "double",
+         "type": 6,
+         "value": "0b0011111111010000000000000000000000000000000000000000000000000000"
+      },
+      {
+         "key": "int",
+         "type": 3,
+         "value": "0b11111111111111111111111111111111"
       }
    ]
 }
+```
+
+#### `-c`, `--readable-compound`
+
+Same as `--type-name --type-key --flat-compound --flat-root`
+
+This option makes safely the output data useful and breaks the order of compound keys.
+
+----
+
+- $ `cat sample/1.nbt | ./nbt2json -pc`
+
+```
+{
+   "C": {
+      "Alist": {
+         "type": "byte",
+         "values": [
+            1,
+            2
+         ]
+      },
+      "Ddouble": "0x3fd0000000000000=0.25",
+      "Iint": -1
+   }
+}
+```
+
+----
+
+This option is useful for using with one-liner such as jq.
+
+- $ `cat sample/1.nbt | ./nbt2json -c | jq '.C.Alist.values | add'`
+
+```
+3
 ```
 
 ### Warnings
@@ -480,7 +761,21 @@ It has to noted that JSON often has strange behaviours when processing extremely
 
 ### Example
 
-- $ `cat level.dat | ./inflate-gzip | ./nbt2json -r -p`
+- $ `cat level.dat | ./inflate-gzip | ./nbt2json -pc`
+
+## `json2nbt`
+
+Read JSON string from stdin and output uncompressed NBT binary data to stdout.
+
+```
+Usage: ./json2nbt [OPTIONS...]
+OPTION:
+                --help
+                --type-key
+        -c,     --readable-compound
+```
+
+The `--type-key` and `--readable-compound` options supports to reverse-convert the data printed with the same options of `nbt2json`.
 
 ## `region-format`
 
