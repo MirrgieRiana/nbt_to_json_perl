@@ -133,25 +133,18 @@ Format JSON string.
 
 This option can be used without making the reverse conversion of the output data impossible.
 
-----
-
-- $ `cat sample/1.nbt | ./nbt2json`
-
 <details>
 <summary>Example</summary>
+
+- $ `cat sample/1.nbt | ./nbt2json`
 
 ```
 {"key":"","type":10,"value":[{"key":"list","type":9,"value":{"type":1,"values":[1,2]}},{"key":"double","type":6,"value":"0x3fd0000000000000=0.25"},{"key":"int","type":3,"value":-1}]}
 ```
 
-</details>
-
 ↓
 
 - $ `cat sample/1.nbt | ./nbt2json -p`
-
-<details>
-<summary>Example</summary>
 
 ```
 {
@@ -191,12 +184,10 @@ Force root tag name to be `root`.
 
 **Note: This option makes the reverse conversion of the output data impossible.**
 
-----
-
-- $ `cat sample/1.nbt | ./nbt2json -p --root-name`
-
 <details>
 <summary>Example</summary>
+
+- $ `cat sample/1.nbt | ./nbt2json -p --root-name`
 
 ```
 {
@@ -236,12 +227,10 @@ Type is represented by name, not type ID.
 
 This option can be used without making the reverse conversion of the output data impossible.
 
-----
-
-- $ `cat sample/1.nbt | ./nbt2json -p --type-name`
-
 <details>
 <summary>Example</summary>
+
+- $ `cat sample/1.nbt | ./nbt2json -p --type-name`
 
 ```
 {
@@ -299,12 +288,10 @@ This option can be used without making the reverse conversion of the output data
 
 **Note: Output data printed with this option must be reverse-converted with the same option.**
 
-----
-
-- $ `cat sample/1.nbt | ./nbt2json -p --type-key`
-
 <details>
 <summary>Example</summary>
+
+- $ `cat sample/1.nbt | ./nbt2json -p --type-key`
 
 ```
 {
@@ -346,12 +333,10 @@ The content of a compound tag is a JSON object instead of a list of tag structur
 
 **Note: Because the order of the tags is not preserved, the reverse conversion generally does not produce the same data.**
 
-----
-
-- $ `cat sample/1.nbt | ./nbt2json -p --flat-compound`
-
 <details>
 <summary>Example</summary>
+
+- $ `cat sample/1.nbt | ./nbt2json -p --flat-compound`
 
 ```
 {
@@ -381,12 +366,10 @@ The root tag is a JSON object instead of a tag structure.
 
 **Note: Because the order of the tags is not preserved, the reverse conversion generally does not produce the same data.**
 
-----
-
-- $ `cat sample/1.nbt | ./nbt2json -p --flat-root`
-
 <details>
 <summary>Example</summary>
+
+- $ `cat sample/1.nbt | ./nbt2json -p --flat-root`
 
 ```
 {
@@ -424,12 +407,10 @@ The content of a list tag is a JSON array instead of a structure containing type
 
 **Note: This option makes the reverse conversion of the output data impossible.**
 
-----
-
-- $ `cat sample/1.nbt | ./nbt2json -p --flat-list`
-
 <details>
 <summary>Example</summary>
+
+- $ `cat sample/1.nbt | ./nbt2json -p --flat-list`
 
 ```
 {
@@ -466,12 +447,10 @@ Print a byte, short, int, and long value as a hex string.
 
 This option can be used without making the reverse conversion of the output data impossible.
 
-----
-
-- $ `cat sample/1.nbt | ./nbt2json -p --hex-integer`
-
 <details>
 <summary>Example</summary>
+
+- $ `cat sample/1.nbt | ./nbt2json -p --hex-integer`
 
 ```
 {
@@ -511,12 +490,10 @@ Print a float and double value as a hex string.
 
 This option can be used without making the reverse conversion of the output data impossible.
 
-----
-
-- $ `cat sample/1.nbt | ./nbt2json -p --hex-float`
-
 <details>
 <summary>Example</summary>
+
+- $ `cat sample/1.nbt | ./nbt2json -p --hex-float`
 
 ```
 {
@@ -556,12 +533,10 @@ Print a byte, short, int, and long value as a binary string.
 
 This option can be used without making the reverse conversion of the output data impossible.
 
-----
-
-- $ `cat sample/1.nbt | ./nbt2json -p --bin-integer`
-
 <details>
 <summary>Example</summary>
+
+- $ `cat sample/1.nbt | ./nbt2json -p --bin-integer`
 
 ```
 {
@@ -601,12 +576,10 @@ Print a float and double value as a binary string.
 
 This option can be used without making the reverse conversion of the output data impossible.
 
-----
-
-- $ `cat sample/1.nbt | ./nbt2json -p --bin-float`
-
 <details>
 <summary>Example</summary>
+
+- $ `cat sample/1.nbt | ./nbt2json -p --bin-float`
 
 ```
 {
@@ -647,12 +620,10 @@ You can process data using `$_`.
 
 **Note: This option can make the reverse conversion of the output data impossible.**
 
-----
-
-- $ `cat sample/1.nbt | ./nbt2json -pc -e '$_ = $_->{C}->{Alist}'`
-
 <details>
 <summary>Example</summary>
+
+- $ `cat sample/1.nbt | ./nbt2json -pc -e '$_ = $_->{C}->{Alist}'`
 
 ```
 {
@@ -672,12 +643,10 @@ Same as `--root-name --flat-compound --flat-root --flat-list`
 
 **Note: This option makes the reverse conversion of the output data impossible.**
 
-----
-
-- $ `cat sample/1.nbt | ./nbt2json -pr`
-
 <details>
 <summary>Example</summary>
+
+- $ `cat sample/1.nbt | ./nbt2json -pr`
 
 ```
 {
@@ -700,12 +669,10 @@ Same as `--hex-integer --hex-float`
 
 This option can be used without making the reverse conversion of the output data impossible.
 
-----
-
-- $ `cat sample/1.nbt | ./nbt2json -pH`
-
 <details>
 <summary>Example</summary>
+
+- $ `cat sample/1.nbt | ./nbt2json -pH`
 
 ```
 {
@@ -745,12 +712,10 @@ Same as `--bin-integer --bin-float`
 
 This option can be used without making the reverse conversion of the output data impossible.
 
-----
-
-- $ `cat sample/1.nbt | ./nbt2json -pB`
-
 <details>
 <summary>Example</summary>
+
+- $ `cat sample/1.nbt | ./nbt2json -pB`
 
 ```
 {
@@ -790,12 +755,10 @@ Same as `--type-name --type-key --flat-compound --flat-root`
 
 This option makes safely the output data useful and breaks the order of compound keys.
 
-----
-
-- $ `cat sample/1.nbt | ./nbt2json -pc`
-
 <details>
 <summary>Example</summary>
+
+- $ `cat sample/1.nbt | ./nbt2json -pc`
 
 ```
 {
@@ -813,16 +776,11 @@ This option makes safely the output data useful and breaks the order of compound
 }
 ```
 
-</details>
-
 ----
 
 This option is useful for using with one-liner such as jq.
 
 - $ `cat sample/1.nbt | ./nbt2json -c | jq '.C.Alist.values | add'`
-
-<details>
-<summary>Example</summary>
 
 ```
 3
