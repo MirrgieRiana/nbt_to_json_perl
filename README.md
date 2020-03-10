@@ -4,7 +4,7 @@ NBT to JSON Perl - Command line tools to convert NBT and JSON written in Perl
 
 # Synopsis
 
-When `nbt2json` caught NBT binary data from stdin, outputs the JSON string expression.
+`nbt2json` inputs NBT binary data from stdin and outputs the JSON string expression to stdout.
 
 - $ `cat sample/1.nbt | ./nbt2json`
 
@@ -64,7 +64,6 @@ So you can convert NBT binary to JSON string and modify the JSON string and conv
 This library depends on the following programs.
 
 - perl
-- gzip
 - perl module: `JSON`
 - perl module: `Compress::Zlib`
 
@@ -90,6 +89,14 @@ Decompress the zlib data.
 ## `inflate-gzip`
 
 Decompress the gzip data.
+
+## `deflate-zlib`
+
+Compress the zlib data.
+
+## `deflate-gzip`
+
+Compress the gzip data.
 
 ## `nbt2json`
 
