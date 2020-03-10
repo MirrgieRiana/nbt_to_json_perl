@@ -1,0 +1,25 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use Compress::Zlib;
+
+binmode STDIN;
+binmode STDOUT;
+
+my $x = deflateInit() or die "Can not create a deflation stream";
+
+while (1) {
+	my $res = read(STDIN, my $buffer, 4096) // die "Can not read from stream";
+	if ($res == 0) {
+		my ($output, $status) = $x->flush();
+		die "Deflation failed" unless $status == Z_OK;
+		print $output;
+		last;
+	}
+	my ($output, $status) = $x->deflate($buffer);
+	if ($status == Z_OK) {
+		print $output;
+	} else {
+		die "Deflation failed";
+	}
+}

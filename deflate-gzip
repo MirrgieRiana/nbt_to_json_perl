@@ -1,0 +1,12 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use Compress::Zlib;
+
+my $fh = gzopen "-", "wb" or die "Can not open output stream";
+binmode STDIN;
+
+while (read(STDIN, my $buffer, 4096) // die "Can not read from stream" > 0) {
+	$fh->gzwrite($buffer) or die "Can not write to stream";
+}
+$fh->gzclose;

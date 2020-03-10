@@ -1,3 +1,15 @@
-#!/usr/bin/env sh
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use Compress::Zlib;
 
-exec gzip -cd
+my $fh = gzopen "-", "rb" or die "Can not open input stream";
+binmode STDOUT;
+
+while (1) {
+	my $res = $fh->gzreadline(my $buffer);
+	die "Can not read from stream" if $res == -1;
+	last if $res == 0;
+	print $buffer;
+}
+$fh->gzclose;
