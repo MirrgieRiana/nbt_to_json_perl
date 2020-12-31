@@ -836,6 +836,10 @@ The `--type-key` and `--readable-compound` options supports to reverse-convert t
 
 Returns the existence and the compression format of a chunk as return code.
 
+## `region-format-all`
+
+Returns the existence and the compression format of all the chunk as csv.
+
 ### Usage
 
 - $ `./region-format REGION_FILENAME X Z`
