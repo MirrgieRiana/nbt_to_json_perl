@@ -1,0 +1,82 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+sub usage() {
+	print STDERR "Usage: ".__FILE__." REGION_FILENAME\n";
+	exit 1;
+}
+
+my $filename = shift @ARGV;
+usage if ! defined $filename;
+
+#
+
+open my $fh, "<", $filename or die;
+binmode $fh;
+
+#
+
+sub read_data($) {
+	my $size = shift;
+	if ($size == 0) {
+		return "";
+	} else {
+
+		my $buffer;
+		my $result = read($fh, $buffer, $size);
+
+		die "Can not read from file: $filename" if $result == 0;
+		die "Can not read from file: $filename" if ! defined $result;
+
+		return $buffer;
+	}
+}
+
+sub read_byte() {
+	return unpack("c", read_data(1));
+}
+
+sub read_int() {
+	return unpack("l>", read_data(4));
+}
+
+#
+
+for my $x (0 .. 31) {
+	my @line = ();
+	for my $z (0 .. 31) {
+
+		my $index = $x + $z * 32;
+		#print STDERR "index: $index\n";
+
+		seek $fh, $index * 4, 0 or die;
+
+		my $offset = read_int();
+		#print STDERR "offset: $offset\n";
+
+		if ($offset == 0) {
+			push @line, 0;
+			next;
+		}
+
+		my $sector_index = $offset >> 8;
+		#print STDERR "sector_index: $sector_index\n";
+
+		my $sector_length = $offset & 255;
+		#print STDERR "sector_length: $sector_length\n";
+
+		seek $fh, $sector_index * 4096, 0 or die;
+		#print STDERR "seek: ", $sector_index * 4096, "\n";
+
+		my $length = read_int();
+		#print STDERR "length: $length\n";
+
+		my $format = read_byte();
+		#print STDERR "format: $format\n";
+
+		push @line, $format;
+	}
+	print join(",", @line), "\n";
+}
