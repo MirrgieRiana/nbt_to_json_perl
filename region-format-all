@@ -44,9 +44,9 @@ sub read_int() {
 
 #
 
-for my $x (0 .. 31) {
+for my $z (0 .. 31) {
 	my @line = ();
-	for my $z (0 .. 31) {
+	for my $x (0 .. 31) {
 
 		my $index = $x + $z * 32;
 		#print STDERR "index: $index\n";
