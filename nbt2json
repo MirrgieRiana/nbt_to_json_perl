@@ -276,7 +276,7 @@ sub read_float() {
 	} elsif ($bin_float) {
 		return "0b".unpack("B*", read_data(4));
 	} elsif ($dec_float) {
-		return unpack("f>", $data);
+		return unpack("f>", read_data(4));
 	} else {
 		my $data = read_data(4);
 		return "0x".unpack("H*", $data)."=".sprintf("%.17g", unpack("f>", $data));
@@ -289,7 +289,7 @@ sub read_double() {
 	} elsif ($bin_float) {
 		return "0b".unpack("B*", read_data(8));
 	} elsif ($dec_float) {
-		return unpack("d>", $data);
+		return unpack("d>", read_data(8));
 	} else {
 		my $data = read_data(8);
 		return "0x".unpack("H*", $data)."=".sprintf("%.17g", unpack("d>", $data));
