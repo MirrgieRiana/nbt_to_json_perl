@@ -121,10 +121,12 @@ OPTION:
                 --hex-float
                 --bin-integer
                 --bin-float
+                --dec-float
         -e,     --eval PROGRAM
         -r,     --readable
         -H,     --hex
         -B,     --bin
+        -D,     --dec
         -c,     --readable-compound
 ```
 
@@ -620,6 +622,49 @@ This option can be used without making the reverse conversion of the output data
 
 </details>
 
+#### `--dec-float`
+
+Print a float and double value as a real number.
+
+**Note: This option makes the reverse conversion of the output data impossible.**
+
+<details>
+<summary>Example</summary>
+
+- $ `cat sample/1.nbt | ./nbt2json -p --dec-float`
+
+```
+{
+   "key": "",
+   "type": 10,
+   "value": [
+      {
+         "key": "list",
+         "type": 9,
+         "value": {
+            "type": 1,
+            "values": [
+               1,
+               2
+            ]
+         }
+      },
+      {
+         "key": "double",
+         "type": 6,
+         "value": 0.25
+      },
+      {
+         "key": "int",
+         "type": 3,
+         "value": -1
+      }
+   ]
+}
+```
+
+</details>
+
 #### `-e PROGRAM`, `--eval PROGRAM`
 
 Process the perl program before printing the JSON string.
@@ -755,6 +800,10 @@ This option can be used without making the reverse conversion of the output data
 ```
 
 </details>
+
+#### `-D`, `--dec`
+
+Same as `--dec-float`
 
 #### `-c`, `--readable-compound`
 
