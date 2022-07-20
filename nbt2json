@@ -45,6 +45,7 @@ my $hex_integer = 0;
 my $hex_float = 0;
 my $bin_integer = 0;
 my $bin_float = 0;
+my $dec_float = 0
 my $eval;
 
 my @short_options;
@@ -130,6 +131,11 @@ while ($#ARGV > -1 || $#short_options > -1) {
 		next;
 	}
 
+	if (arg "--dec-float") {
+		$dec_float = 1;
+		next;
+	}
+
 	if (sarg "e" || arg "--eval") {
 		usage *STDERR, 1 unless $#ARGV > -1;
 		$eval = shift @ARGV;
@@ -153,6 +159,11 @@ while ($#ARGV > -1 || $#short_options > -1) {
 	if (sarg "B" || arg "--bin") {
 		$bin_integer = 1;
 		$bin_float = 1;
+		next;
+	}
+
+	if (sarg "D" || arg "--dec") {
+		$dec_float = 1;
 		next;
 	}
 
@@ -262,6 +273,8 @@ sub read_float() {
 		return "0x".unpack("H*", read_data(4));
 	} elsif ($bin_float) {
 		return "0b".unpack("B*", read_data(4));
+	} elsif ($dec_float) {
+		return unpack("f>", $data);
 	} else {
 		my $data = read_data(4);
 		return "0x".unpack("H*", $data)."=".sprintf("%.17g", unpack("f>", $data));
@@ -273,6 +286,8 @@ sub read_double() {
 		return "0x".unpack("H*", read_data(8));
 	} elsif ($bin_float) {
 		return "0b".unpack("B*", read_data(8));
+	} elsif ($dec_float) {
+		return unpack("d>", $data);
 	} else {
 		my $data = read_data(8);
 		return "0x".unpack("H*", $data)."=".sprintf("%.17g", unpack("d>", $data));
