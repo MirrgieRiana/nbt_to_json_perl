@@ -26,10 +26,12 @@ sub usage(*$) {
 	print $fh "\t\t--hex-float\n";
 	print $fh "\t\t--bin-integer\n";
 	print $fh "\t\t--bin-float\n";
+	print $fh "\t\t--dec-float\n";
 	print $fh "\t-e,\t--eval PROGRAM\n";
 	print $fh "\t-r,\t--readable\n";
 	print $fh "\t-H,\t--hex\n";
 	print $fh "\t-B,\t--bin\n";
+	print $fh "\t-D,\t--dec\n";
 	print $fh "\t-c,\t--readable-compound\n";
 	exit $code;
 }
