@@ -47,7 +47,7 @@ my $hex_integer = 0;
 my $hex_float = 0;
 my $bin_integer = 0;
 my $bin_float = 0;
-my $dec_float = 0
+my $dec_float = 0;
 my $eval;
 
 my @short_options;
